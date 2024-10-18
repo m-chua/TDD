@@ -132,9 +132,8 @@ describe('Module A', () => {
             sinon.assert.calledOnce(res.status(500).end);
         });
     });
-});
 
-
+    
 describe('findPost', () => {
     var findPostStub;
 
@@ -159,13 +158,13 @@ describe('findPost', () => {
             content: 'Random content',
         };
 
-        findPostStub = sinon.stub(ModuleA, 'findPost').yields(null, expectedResult);
+        findPostStub = sinon.stub(moduleA, 'findPost').yields(null, expectedResult);
 
         // Act
         PostController.findPost(req, res);
 
         // Assert
-        sinon.assert.calledWith(ModuleA.findPost, req.body);
+        sinon.assert.calledWith(moduleA.findPost, req.body);
         sinon.assert.calledWith(res.json, sinon.match({ title: req.body.title }));
         sinon.assert.calledWith(res.json, sinon.match({ content: req.body.content }));
 
@@ -174,14 +173,67 @@ describe('findPost', () => {
     // Error Scenario
     it('should return the error message', () => {
         // Arrange
-        findPostStub = sinon.stub(ModuleA, 'findPost').yields(error);
+        findPostStub = sinon.stub(moduleA, 'findPost').yields(error);
 
         // Act
         PostController.findPost(req, res);
 
         // Assert
-        sinon.assert.calledWith(ModuleA.findPost, req.body);
+        sinon.assert.calledWith(moduleA.findPost, req.body);
         sinon.assert.calledWith(res.status, 500);
         sinon.assert.calledOnce(res.status(500).end);
     });
 });
+
+
+describe('getAllPosts', () => {
+    var getPostStub;
+
+    beforeEach(() => {
+        // before every test case setup first
+        res = {
+            json: sinon.spy(),
+            status: sinon.stub().returns({ end: sinon.spy() })
+        };
+    });
+
+    afterEach(() => {
+        // executed after the test case
+        getPostStub.restore();
+    });
+
+    it('should return all posts', async () => {
+        expectedResult = {
+            _id: '507asdghajsdhjgasd',
+            title: 'My first test post',
+            content: 'Random content',
+            author: 'stswenguser',
+        };
+
+        getPostStub = sinon.stub(moduleA, 'getAllPosts').yields(null, expectedResult);
+
+        // Act
+        await PostController.getAllPosts(req, res);
+
+        // Assert
+        sinon.assert.calledWith(moduleA.getAllPosts);
+        sinon.assert.calledWith(res.json, sinon.match({ title: req.body.title }));
+        sinon.assert.calledWith(res.json, sinon.match({ content: req.body.content }));
+        sinon.assert.calledWith(res.json, sinon.match({ author: req.body.author }));
+    });
+    it('should return the error message', () => {
+         // Arrange
+         getPostStub = sinon.stub(moduleA, 'getAllPosts').yields(error);
+
+         // Act
+         PostController.getAllPosts(req, res);
+
+         // Assert
+         sinon.assert.calledWith(moduleA.getAllPosts);
+         sinon.assert.calledWith(res.status, 500);
+         sinon.assert.calledOnce(res.status(500).end);
+    });
+});
+
+});
+

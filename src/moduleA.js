@@ -19,6 +19,15 @@ const updatePost = async (req, next) => {
 }
 
 
+const findPost = async (req, next) => {
+    try {
+        const post = await Post.findById(req.id);
+        next(null, post);
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
-    updatePost
+    updatePost, findPost
 };
