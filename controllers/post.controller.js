@@ -1,4 +1,5 @@
 const PostModel = require('../models/post.model');
+const moduleA = require('../src/moduleA')
 const PostController = {};
 
 PostController.create = (req, res) => {
@@ -13,7 +14,7 @@ PostController.create = (req, res) => {
 };
 
 PostController.update = (req, res) => {
-
+    
 };
 
 PostController.findPost = (req, res) => {
