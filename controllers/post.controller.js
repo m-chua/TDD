@@ -13,10 +13,17 @@ PostController.create = (req, res) => {
 
 };
 
-PostController.update = (req, res) => {
-    
-};
 
+PostController.update = (req, res) => {
+    return moduleA.updatePost(req.body, (err, post) => {
+        if (err) {
+            return res.status(500).end();
+        } else {
+            return res.json(post);
+        }
+    })
+};
+/*
 PostController.findPost = (req, res) => {
 
 };
@@ -24,5 +31,6 @@ PostController.findPost = (req, res) => {
 PostController.getAllPosts = (req, res) => {
 
 };
+*/
 
 module.exports = PostController;

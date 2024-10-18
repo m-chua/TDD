@@ -90,11 +90,11 @@ describe('Module A', () => {
 
         afterEach(() => {
             // executed after the test case
-            createPostStub.restore();
+            updatePostStub.restore();
         });
 
 
-        it('should return the created post object', () => {
+        it('should return the created post object', async () => {
             // Arrange
             expectedResult = {
                 _id: '507asdghajsdhjgasd',
@@ -107,7 +107,7 @@ describe('Module A', () => {
             updatePostStub = sinon.stub(moduleA, 'updatePost').yields(null, expectedResult);
 
             // Act
-            PostController.create(req, res);
+            await PostController.update(req, res);
 
             // Assert
             sinon.assert.calledWith(moduleA.updatePost, req.body);
@@ -121,15 +121,67 @@ describe('Module A', () => {
         // Error Scenario
         it('should return status 500 on server error', () => {
             // Arrange
-            createPostStub = sinon.stub(PostModel, 'createPost').yields(error);
+            updatePostStub = sinon.stub(moduleA, 'updatePost').yields(error);
 
             // Act
-            PostController.create(req, res);
+            PostController.update(req, res);
 
             // Assert
-            sinon.assert.calledWith(PostModel.createPost, req.body);
+            sinon.assert.calledWith(moduleA.updatePost, req.body);
             sinon.assert.calledWith(res.status, 500);
             sinon.assert.calledOnce(res.status(500).end);
         });
+    });
+});
+
+
+describe('findPost', () => {
+    var findPostStub;
+
+    beforeEach(() => {
+        // before every test case setup first
+        res = {
+            json: sinon.spy(),
+            status: sinon.stub().returns({ end: sinon.spy() })
+        };
+    });
+
+    afterEach(() => {
+        // executed after the test case
+        findPostStub.restore();
+    });
+
+    it('should return the found post object', async () => {
+        // Arrange
+        expectedResult = {
+            _id: '507asdghajsdhjgasd',
+            title: 'My first test post',
+            content: 'Random content',
+        };
+
+        findPostStub = sinon.stub(ModuleA, 'findPost').yields(null, expectedResult);
+
+        // Act
+        PostController.findPost(req, res);
+
+        // Assert
+        sinon.assert.calledWith(ModuleA.findPost, req.body);
+        sinon.assert.calledWith(res.json, sinon.match({ title: req.body.title }));
+        sinon.assert.calledWith(res.json, sinon.match({ content: req.body.content }));
+
+    });
+
+    // Error Scenario
+    it('should return the error message', () => {
+        // Arrange
+        findPostStub = sinon.stub(ModuleA, 'findPost').yields(error);
+
+        // Act
+        PostController.findPost(req, res);
+
+        // Assert
+        sinon.assert.calledWith(ModuleA.findPost, req.body);
+        sinon.assert.calledWith(res.status, 500);
+        sinon.assert.calledOnce(res.status(500).end);
     });
 });
