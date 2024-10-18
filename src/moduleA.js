@@ -28,6 +28,15 @@ const findPost = async (req, next) => {
     }
 }
 
+const getAllPosts = async (req, next) => {
+    try {
+        const posts = await Post.find();
+        next(null, posts)
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
-    updatePost, findPost
+    findPost, updatePost, getAllPosts
 };
